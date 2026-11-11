@@ -1,0 +1,75 @@
+digraph MacroEconomicsERD {
+  graph [
+    rankdir=LR,
+    bgcolor="white",
+    pad="0.28",
+    nodesep="0.55",
+    ranksep="0.95",
+    splines=ortho,
+    fontname="Arial",
+    labelloc="t",
+    label="RELATIONAL DATABASE — MACROECONOMIC DATA ANALYSIS IN POLAND\nEntity–Relationship Diagram",
+    fontsize=20,
+    fontcolor="#17324D"
+  ];
+  node [shape=plain, fontname="Arial"];
+  edge [fontname="Arial", fontsize=10, color="#52677D", penwidth=1.5, arrowsize=0.75];
+
+  sources [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="8" COLOR="#A9BACB">
+      <TR><TD BGCOLOR="#244A68"><FONT COLOR="white"><B>sources</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B> source_id : INT, AUTO_INCREMENT</TD></TR>
+      <TR><TD ALIGN="LEFT">source_name : VARCHAR(100), UNIQUE, NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  indicators [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="8" COLOR="#A9BACB">
+      <TR><TD BGCOLOR="#244A68"><FONT COLOR="white"><B>indicators</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B> indicator_id : INT, AUTO_INCREMENT</TD></TR>
+      <TR><TD ALIGN="LEFT">indicator_name : VARCHAR(100), NOT NULL</TD></TR>
+      <TR><TD ALIGN="LEFT">unit : VARCHAR(20), NOT NULL</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>FK</B> source_id : INT, NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  countries [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="8" COLOR="#A9BACB">
+      <TR><TD BGCOLOR="#244A68"><FONT COLOR="white"><B>countries</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B> country_id : INT, AUTO_INCREMENT</TD></TR>
+      <TR><TD ALIGN="LEFT">country_name : VARCHAR(100), NOT NULL</TD></TR>
+      <TR><TD ALIGN="LEFT">iso_code : VARCHAR(5), UNIQUE, NOT NULL</TD></TR>
+    </TABLE>
+  >];
+
+  periods [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="8" COLOR="#A9BACB">
+      <TR><TD BGCOLOR="#244A68"><FONT COLOR="white"><B>periods</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B> period_id : INT, AUTO_INCREMENT</TD></TR>
+      <TR><TD ALIGN="LEFT">year : INT, NOT NULL</TD></TR>
+      <TR><TD ALIGN="LEFT">quarter : TINYINT, NOT NULL, CHECK (1–4)</TD></TR>
+      <TR><TD ALIGN="LEFT"><I>UNIQUE (year, quarter)</I></TD></TR>
+    </TABLE>
+  >];
+
+  macro_values [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="8" COLOR="#A9BACB">
+      <TR><TD BGCOLOR="#1F6B78"><FONT COLOR="white"><B>macro_values</B> (fact table)</FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B> value_id : INT, AUTO_INCREMENT</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>FK</B> country_id : INT, NOT NULL</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>FK</B> indicator_id : INT, NOT NULL</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>FK</B> period_id : INT, NOT NULL</TD></TR>
+      <TR><TD ALIGN="LEFT">value : DECIMAL(12,4), NULLABLE</TD></TR>
+      <TR><TD ALIGN="LEFT"><I>UNIQUE (country_id, indicator_id, period_id)</I></TD></TR>
+    </TABLE>
+  >];
+
+  sources -> indicators [taillabel="1", headlabel="N", labeldistance=1.7, labelangle=25];
+  indicators -> macro_values [taillabel="1", headlabel="N", labeldistance=1.7, labelangle=25];
+  countries -> macro_values [taillabel="1", headlabel="N", labeldistance=1.7, labelangle=25];
+  periods -> macro_values [taillabel="1", headlabel="N", labeldistance=1.7, labelangle=25];
+
+  {rank=same; sources; countries; periods;}
+  sources -> countries [style=invis, weight=2];
+  countries -> periods [style=invis, weight=2];
+}
